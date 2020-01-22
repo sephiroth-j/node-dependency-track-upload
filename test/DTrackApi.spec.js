@@ -16,7 +16,7 @@
 
 'use strict';
 const expect = require('chai').expect;
-const DTrackApi = require('../DTrackApi.js');
+const DTrackApi = require('../src/DTrackApi.js');
 const {
 	Observable
 } = require('rxjs');
