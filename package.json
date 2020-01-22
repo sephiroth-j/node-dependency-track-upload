@@ -2,15 +2,15 @@
   "name": "@sephiroth-j/node-dependency-track-upload",
   "version": "0.1.0-beta",
   "description": "Node.js plugin to integrate with Dependency-Track server to submit dependency manifests and gather project metrics.",
-  "main": "DTrackApi.js",
+  "main": "src/DTrackApi.js",
   "scripts": {
-    "start": "node bin/dtrack-upload.js",
+    "start": "node src/bin/dtrack-upload.js",
     "test": "mocha",
     "coverage": "nyc npm run test",
     "sonar": "mocha -R @danmasta/mocha-sonar"
   },
   "bin": {
-    "dtrack-upload": "./bin/dtrack-upload.js"
+    "dtrack-upload": "./src/bin/dtrack-upload.js"
   },
   "keywords": [
     "dependency-track",
@@ -31,8 +31,7 @@
     "url": null
   },
   "files": [
-    "DTrackApi.js",
-    "bin/"
+    "src/"
   ],
   "engines": {
     "node": ">=12.4.0"

@@ -16,7 +16,7 @@
  */
 
 'use strict';
-const configPrefix = require('../package.json').name;
+const configPrefix = require('../../package.json').name;
 const DTrackApi = require('../DTrackApi.js');
 const npmConf = require('npm-conf')();
 const fs = require('fs');
