@@ -1,0 +1,6 @@
+/package-lock.json
+/nbproject
+/node_modules
+/bom.xml
+/coverage
+/.nyc_output
