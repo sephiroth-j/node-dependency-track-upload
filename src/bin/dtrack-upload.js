@@ -119,7 +119,7 @@ The URL to Dependency-Track and the API key can be specified through your .npmrc
 			implies: 'pn'
 		}
 	}, uploadBom)
-	.argv;
+	.parse();
 
 function listProjects(argv) {
 	const api = new DTrackApi(argv.url, argv.apiKey);
