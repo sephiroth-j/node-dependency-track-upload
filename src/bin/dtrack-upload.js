@@ -45,6 +45,8 @@ require('yargs')
 	.parserConfiguration({
 		'set-placeholder-key': true
 	})
+	.epilog(`Providing URL and API Key:
+The URL to Dependency-Track and the API key can be specified through your .npmrc (default) or by passing them as argument. The config name for the url is '${configPrefix}:url' and '${configPrefix}:apiKey' for the api key.`)
 	.options({
 		'url': {
 			requiresArg: true,
@@ -61,8 +63,6 @@ require('yargs')
 			type: 'string'
 		}
 	})
-	.epilog(`Providing URL and API Key:
-The URL to Dependency-Track and the API key can be specified through your .npmrc (default) or by passing them as argument. The config name for the url is '${configPrefix}:url' and '${configPrefix}:apiKey' for the api key.`)
 	.command('list-projects', 'list all known projects', {
 		'active-only': {
 			desc: 'show only active projects',
