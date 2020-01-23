@@ -20,6 +20,7 @@ const configPrefix = require('../../package.json').name;
 const DTrackApi = require('../DTrackApi.js');
 const npmConf = require('npm-conf')();
 const fs = require('fs');
+const { EOL } = require('os');
 const clc = require('cli-color');
 const {
 	createStream,
@@ -155,13 +156,13 @@ function listProjects(argv) {
 		}
 	}, () => {
 		if (argv.table) {
-			process.stdout.write("\n");
+			process.stdout.write(EOL);
 		}
 		console.error(error('failed to fetch project list. check if url "%s" and api-key "%s" are valid.'), argv.url, argv.apiKey);
 		process.exit(3);
 	}, () => {
 		if (argv.table) {
-			process.stdout.write("\n");
+			process.stdout.write(EOL);
 		}
 	});
 }
