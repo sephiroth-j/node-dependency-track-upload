@@ -19,23 +19,8 @@
 const configPrefix = require('../../package.json').name;
 const DTrackApi = require('../DTrackApi.js');
 const npmConf = require('npm-conf')();
-const fs = require('fs');
-const { EOL } = require('os');
-const clc = require('cli-color');
-const {
-	createStream,
-	getBorderCharacters,
-} = require('table');
-const {
-	mergeMap,
-	startWith,
-	filter,
-} = require('rxjs/operators');
-
-const success = clc.green;
-const error = clc.red.bold;
-const warning = clc.yellow;
-const notice = clc.blue;
+/* istanbul ignore next */
+const cli = new (require('../CLI.js'))((url, apiKey) => new DTrackApi(url, apiKey));
 
 require('yargs')
 	.usage('Usage: $0 <command> [options]')
@@ -80,7 +65,7 @@ The URL to Dependency-Track and the API key can be specified through your .npmrc
 			desc: 'output as ASCII table',
 			type: 'boolean'
 		}
-	}, listProjects)
+	}, cli.listProjects.bind(cli))
 	.command('upload-bom', 'upload bom.xml', {
 		'b': {
 			alias: 'bom',
@@ -119,80 +104,5 @@ The URL to Dependency-Track and the API key can be specified through your .npmrc
 			conflicts: ['p', 'pj'],
 			implies: 'pn'
 		}
-	}, uploadBom)
+	}, cli.uploadBom.bind(cli))
 	.parse();
-
-function listProjects(argv) {
-	const api = new DTrackApi(argv.url, argv.apiKey);
-	const projectStream = argv.table ? createStream({
-		columnDefault: {
-			width: 30
-		},
-		columnCount: 3,
-		border: getBorderCharacters('norc'),
-		columns: {
-			1: {
-				width: 10
-			}
-		}
-	}) : null;
-	const tabHeader = argv.table ? [{
-		name: 'Project Name',
-		version: 'Version',
-		uuid: 'UUID'
-	}] : [];
-
-	api.check().pipe(
-		mergeMap(() => api.getProjectList(argv.activeOnly)),
-		// apply name filter if needed
-		filter(project => !argv.filter || project.name.indexOf(argv.filter) >= 0),
-		// insert table header row
-		startWith(...tabHeader)
-	).subscribe(project => {
-		if (argv.table) {
-			projectStream.write([notice(project.name), notice(project.version), notice(project.uuid)]);
-		} else {
-			console.log(notice(`${project.name}, ${project.version}, ${project.uuid}`));
-		}
-	}, () => {
-		if (argv.table) {
-			process.stdout.write(EOL);
-		}
-		console.error(error('failed to fetch project list. check if url "%s" and api-key "%s" are valid.'), argv.url, argv.apiKey);
-		process.exit(3);
-	}, () => {
-		if (argv.table) {
-			process.stdout.write(EOL);
-		}
-	});
-}
-
-function uploadBom(argv) {
-	let bom = argv.b;
-	let projectUuid = argv.p;
-	let packageJsonLoc = argv.pj;
-	let projectName = argv.pn;
-	let projectVersion = argv.pv;
-	if (fs.existsSync(packageJsonLoc)) {
-		const packageJson = JSON.parse(fs.readFileSync(packageJsonLoc, 'utf-8'));
-		projectName = packageJson.name;
-		projectVersion = packageJson.version;
-	} else {
-		console.warn(warning(`could not find package.json at "${packageJsonLoc}". be sure to provide "projectName" and "projectVersion"`));
-	}
-	if (fs.existsSync(bom)) {
-		const buf = fs.readFileSync(bom);
-		const api = new DTrackApi(argv.url, argv.apiKey);
-		api.check().pipe(
-			mergeMap(() => api.uploadBom(buf, projectUuid, projectName, projectVersion))
-		).subscribe(() => {
-			console.log(success('upload succeeded'));
-		}, () => {
-			console.error(error('failed to upload bom. check if url "%s" and api-key "%s" are valid.'), argv.url, argv.apiKey);
-			process.exit(2);
-		});
-	} else {
-		console.error(error(`bom "${bom}" does not exists`));
-		process.exit(1);
-	}
-}
