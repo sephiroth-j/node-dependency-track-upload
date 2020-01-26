@@ -16,3 +16,52 @@
  */
 
 'use strict';
+const expect = require('chai').expect;
+const exec = require('child_process').execFile;
+const cli = './src/bin/dtrack-upload.js';
+
+describe('dtrack-upload', function () {
+	describe('basics', function () {
+		it('should do nothing without args', function (done) {
+			exec('node', [cli], (error, stdout) => {
+				expect(error).to.be.null;
+				expect(stdout).to.be.empty;
+				done();
+			});
+		});
+		it('global help should contain --url and --api-key and all known commands', function (done) {
+			exec('node', [cli, '--help'], (error, stdout) => {
+				expect(error).to.be.null;
+				expect(stdout).to.include(' --url ')
+						.and.to.include(' --api-key ')
+						.and.to.include(' dtrack-upload.js list-projects ')
+						.and.to.include(' dtrack-upload.js upload-bom ');
+				done();
+			});
+		});
+	});
+	describe('command list-projects', function () {
+		it('should have options', function (done) {
+			exec('node', [cli, 'list-projects', '--help'], (error, stdout) => {
+				expect(error).to.be.null;
+				expect(stdout).to.include(' --active-only ')
+						.and.to.include(' --filter ')
+						.and.to.include(' --table ');
+				done();
+			});
+		});
+	});
+	describe('command upload-bom', function () {
+		it('should have options', function (done) {
+			exec('node', [cli, 'upload-bom', '--help'], (error, stdout) => {
+				expect(error).to.be.null;
+				expect(stdout).to.include(' -b, --bom ')
+						.and.to.include(' -p, --project-id ')
+						.and.to.include(' --pv, --project-version ')
+						.and.to.include(' --pn, --project-name ')
+						.and.to.include(' --pj, --package-json ');
+				done();
+			});
+		});
+	});
+});
