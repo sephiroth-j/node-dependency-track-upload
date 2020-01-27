@@ -68,7 +68,8 @@ describe('DTrackApi', function () {
 		});
 		it('should make GET request to <url>/api/version', function (done) {
 			const scope = nock(url).matchHeader('X-Api-Key', apiKey).get('/api/version').reply(200, {
-				application: 'Dependency-Track'
+				application: 'Dependency-Track',
+				version: '3.7.1'
 			});
 
 			api.check().subscribe(undefined, undefined, () => {

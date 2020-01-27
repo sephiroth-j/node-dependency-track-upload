@@ -11,7 +11,7 @@ Node.js plugin to integrate with [Dependency-Track](https://dependencytrack.org/
 ## Requirements
 - Node.js 12.4 or newer
 - [CycloneDX Node.js Module](https://www.npmjs.com/package/@cyclonedx/bom) to create the SBOM
-- [Dependency-Track](https://dependencytrack.org/) server
+- [Dependency-Track](https://dependencytrack.org/) Server with version `^3.7.0`
 
 ## Install
 ```

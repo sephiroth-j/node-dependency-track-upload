@@ -16,8 +16,11 @@
 
 'use strict';
 const { of } = require('rxjs');
+const satisfies = require('semver/functions/satisfies'); 
 const { map, pluck, filter, throwIfEmpty, mergeMap, tap } = require('rxjs/operators');
 const dataAttributeName = 'data';
+// semver of the supported Dependency-Track version(s)
+const supportedVersion = '^3.7.0';
 
 function isValidUrl(url) {
 	try {
@@ -68,7 +71,7 @@ module.exports = class DTrackApi {
 	check() {
 		return this.#axios.get('/version').pipe(
 			pluck(dataAttributeName),
-			filter(data => data.application && data.application === 'Dependency-Track'),
+			filter(data => data.application && data.application === 'Dependency-Track' && satisfies(data.version, supportedVersion)),
 			throwIfEmpty()
 		);
 	}
