@@ -23,7 +23,7 @@ const cli = './src/bin/dtrack-upload.js';
 describe('dtrack-upload', function () {
 	describe('basics', function () {
 		it('should do nothing without args', function (done) {
-			exec('node', [cli], (error, stdout) => {
+			exec('node', [cli, '--url', 'http://foo', '--api-key', 'api-key'], (error, stdout) => {
 				expect(error).to.be.null;
 				expect(stdout).to.be.empty;
 				done();
