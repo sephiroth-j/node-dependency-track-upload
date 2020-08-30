@@ -195,4 +195,47 @@ describe('DTrackApi', function () {
 			});
 		});
 	});
+
+	describe('getVulnerabilities()', function () {
+		let api, url = 'http://foo', apiKey = 'api-key', uuid = '74fc22e1-b126-40a7-a0bb-26ccfb2814bc';
+		beforeEach(function () {
+			api = new DTrackApi(url, apiKey);
+		});
+		it('should throw if project UUID is malformed', function () {
+			expect(api.getVulnerabilities).to.throw(TypeError);
+			expect(api.getVulnerabilities, '').to.throw(TypeError);
+			expect(api.getVulnerabilities, 'asdASD').to.throw(TypeError);
+		});
+		it('should return Observable', function () {
+			expect(api.getVulnerabilities(uuid)).to.be.an.instanceof(Observable);
+		});
+		it(`should make GET request to <url>api/v1/vulnerability/project/${uuid}`, function (done) {
+			const scope = nock(url).matchHeader('X-Api-Key', apiKey).get(`/api/v1/vulnerability/project/${uuid}`).reply(400);
+
+			api.getVulnerabilities(uuid).subscribe(() => {
+				expect.fail('should not have emitted a value');
+			}, () => {
+				expect(scope.isDone()).to.be.true;
+				done();
+			});
+		});
+		it(`should make GET request to <url>api/v1/vulnerability/project/${uuid} and return token`, function (done) {
+			const expected = [
+				{severity: 'CRITICAL'},
+				{severity: 'HIGH'},
+				{severity: 'LOW'},
+				{severity: 'LOW'},
+			];
+			const scope = nock(url).matchHeader('X-Api-Key', apiKey).get(`/api/v1/vulnerability/project/${uuid}`).reply(200, expected);
+
+			let actual;
+			api.getVulnerabilities(uuid).subscribe(vulns => {
+				actual = vulns;
+			}, undefined, () => {
+				expect(scope.isDone()).to.be.true;
+				expect(actual).to.deep.equal(expected);
+				done();
+			});
+		});
+	});
 });

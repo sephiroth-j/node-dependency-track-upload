@@ -6,7 +6,7 @@ Node.js plugin to integrate with [Dependency-Track](https://dependencytrack.org/
 
 ## Features
 1. upload a CycloneDX Software Bill-of-Materials (SBOM) file to Dependency-Track and create the project if needed
-2. get a list of projects, their version and their UUID
+2. get a list of projects, their version, UUID and known vulnerabilities
 
 ## Requirements
 - Node.js 12.4 or newer
@@ -47,7 +47,7 @@ In general, the working directory when executing the command should be your proj
 - `-v, --version`: show version
 
 #### list-projects
-Get a list of known projects. The list can be limited to active projects only (_off by default_) and to projects where the name contains a given string.
+Get a list of known projects and the numbers of their known vulnerabilities (_critical, high, medium, low, info_). The list can be limited to active projects only (_off by default_) and to projects where the name contains a given string.
 
 By default the output is an ASCII table. This can be disabled by giving the option `--no-table`.
 
@@ -56,16 +56,16 @@ By default the output is an ASCII table. This can be disabled by giving the opti
 ```bash
 # output as table
 $ dtrack-upload list-projects
-┌────────────────────────────────┬────────────┬────────────────────────────────┐
-│ Project Name                   │ Version    │ UUID                           │
-├────────────────────────────────┼────────────┼────────────────────────────────┤
-│ @sephiroth-j/node-dependency-t │ 0.1.0-alph │ 1aec8e9d-3024-42fd-ad28-2a35bc │
-│ rack-upload                    │ a          │ b8d282                         │
-└────────────────────────────────┴────────────┴────────────────────────────────┘
+┌───────────────────────┬────────────┬───────────────────────┬─────────────────┐
+│ Project Name          │ Version    │ UUID                  │ Vulnerabilities │
+├───────────────────────┼────────────┼───────────────────────┼─────────────────┤
+│ @sephiroth-j/node-dep │ 0.1.0-beta │ 74fc22e1-b126-40a7-a0 │ 0/0/0/0/0       │
+│ endency-track-upload  │            │ bb-26ccfb2814bc       │                 │
+└───────────────────────┴────────────┴───────────────────────┴─────────────────┘
 
 # plain output
 $ dtrack-upload list-projects --no-table
-@sephiroth-j/node-dependency-track-upload, 0.1.0-alpha, 1aec8e9d-3024-42fd-ad28-2a35bcb8d282
+@sephiroth-j/node-dependency-track-upload, 0.1.0-beta, 74fc22e1-b126-40a7-a0bb-26ccfb2814bc, 0/0/0/0/0
 ```
 
 Filtering by name is done with the option `--filter` followed by the search string, e.g. `dtrack-upload list-projects --filter foo`.

@@ -56,6 +56,9 @@ describe('CLI', function () {
 						version: 'v1',
 						uuid: 'uuid-1'
 					});
+				},
+				getVulnerabilities(uuid) {
+					return of([]);
 				}
 			};
 			const argv = {
@@ -68,7 +71,7 @@ describe('CLI', function () {
 			uut.listProjects(argv);
 			sinon.assert.notCalled(logSpy);
 			sinon.assert.calledThrice(stdoutSpy);
-			expect(stdoutSpy.firstCall.args[0]).to.include('Project Name').and.to.include('Version').and.to.include('UUID');
+			expect(stdoutSpy.firstCall.args[0]).to.include('Project Name').and.to.include('Version').and.to.include('UUID').and.to.include('Vulnerabilities');
 		});
 		it('option --no-table should print simple list', function () {
 			const apiMock = {
@@ -81,6 +84,9 @@ describe('CLI', function () {
 						version: 'v1',
 						uuid: 'uuid-1'
 					});
+				},
+				getVulnerabilities(uuid) {
+					return of([]);
 				}
 			};
 			const argv = {
@@ -92,7 +98,7 @@ describe('CLI', function () {
 			const uut = new CLI(() => apiMock);
 			uut.listProjects(argv);
 			sinon.assert.calledOnce(logSpy);
-			expect(logSpy.firstCall.args[0]).to.include('name1, v1, uuid-1');
+			expect(logSpy.firstCall.args[0]).to.include('name1, v1, uuid-1, 0/0/0/0/0');
 		});
 		it('option --filter should filter items', function () {
 			const apiMock = {
@@ -109,6 +115,9 @@ describe('CLI', function () {
 						version: 'v2',
 						uuid: 'uuid-2'
 					});
+				},
+				getVulnerabilities(uuid) {
+					return of(uuid === 'uuid-1' ? [] : [{severity: 'CRITICAL'}]);
 				}
 			};
 			const argv = {
@@ -121,7 +130,7 @@ describe('CLI', function () {
 			const uut = new CLI(() => apiMock);
 			uut.listProjects(argv);
 			sinon.assert.calledOnce(logSpy);
-			expect(logSpy.firstCall.args[0]).to.include('foo, v2, uuid-2');
+			expect(logSpy.firstCall.args[0]).to.include('foo, v2, uuid-2, 1/0/0/0/0');
 		});
 		it('should exit with code 3 on failure', function () {
 			const apiMock = {

@@ -25,6 +25,7 @@ const {
 	getBorderCharacters,
 } = require('table');
 const {
+	map,
 	mergeMap,
 	startWith,
 	filter,
@@ -51,33 +52,55 @@ module.exports = class CLI {
 		const api = this.#apiFactory(argv.url, argv.apiKey);
 		const projectStream = argv.table ? createStream({
 			columnDefault: {
-				width: 30
+				width: 21
 			},
-			columnCount: 3,
+			columnCount: 4,
 			border: getBorderCharacters('norc'),
 			columns: {
 				1: {
 					width: 10
+				},
+				3: {
+					width: 15
 				}
 			}
 		}) : null;
 		const tabHeader = argv.table ? [{
 				name: 'Project Name',
 				version: 'Version',
-				uuid: 'UUID'
+				uuid: 'UUID',
+				vulns: 'Vulnerabilities',
 			}] : [];
 
 		api.check().pipe(
 			mergeMap(() => api.getProjectList(argv.activeOnly)),
 			// apply name filter if needed
 			filter(project => !argv.filter || project.name.indexOf(argv.filter) >= 0),
+			mergeMap(project => api.getVulnerabilities(project.uuid).pipe(
+				map(vulns => {
+					const critical = vulns.filter(v => v.severity === 'CRITICAL').length;
+					const high = vulns.filter(v => v.severity === 'HIGH').length;
+					const medium = vulns.filter(v => v.severity === 'MEDIUM').length;
+					const low = vulns.filter(v => v.severity === 'LOW').length;
+					const info = vulns.filter(v => v.severity === 'INFO').length;
+					return Object.assign({}, project, {
+						vulns: {
+							// this is for non-colored output (no table)
+							toString: () => `${critical}/${high}/${medium}/${low}/${info}`,
+							// this is for colored output within the table
+							toStringColored: () => `${error(critical)}/${warning(high)}/${clc.xterm(208)(medium)}/${success(low)}/${clc.white(info)}`,
+						}
+					});
+				})
+			)),
 			// insert table header row
 			startWith(...tabHeader)
 		).subscribe(project => {
 			if (argv.table) {
-				projectStream.write([notice(project.name), notice(project.version), notice(project.uuid)]);
+				const vulns = typeof project.vulns === 'string' ? notice(project.vulns) : project.vulns.toStringColored();
+				projectStream.write([notice(project.name), notice(project.version), notice(project.uuid), vulns]);
 			} else {
-				console.log(notice(`${project.name}, ${project.version}, ${project.uuid}`));
+				console.log(notice(`${project.name}, ${project.version}, ${project.uuid}, ${project.vulns}`));
 			}
 		}, () => {
 			/* istanbul ignore else */

@@ -122,5 +122,21 @@ module.exports = class DTrackApi {
 			pluck('token')
 		);
 	}
+	
+	/**
+	 * fetches all known vulnerabilities for the given project
+	 * 
+	 * @param {string} [projectUuid] the uuid of the project
+	 * @returns {Observable<{severity:string}[]>}
+	 */
+	getVulnerabilities(projectUuid) {
+		if (!/^[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}$/.test(projectUuid)) {
+			throw new TypeError('"projectUuid" malformed');
+		}
+		return this.#axios.get(`/v1/vulnerability/project/${projectUuid}`).pipe(
+			pluck(dataAttributeName),
+			map(Object.freeze)
+		);
+	}
 }
 
