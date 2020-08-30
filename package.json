@@ -1,6 +1,6 @@
 {
   "name": "@sephiroth-j/node-dependency-track-upload",
-  "version": "0.1.1-beta",
+  "version": "0.2.0-beta",
   "description": "Node.js plugin to integrate with Dependency-Track server to submit dependency manifests and gather project metrics.",
   "main": "src/DTrackApi.js",
   "scripts": {
