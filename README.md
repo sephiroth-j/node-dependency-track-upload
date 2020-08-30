@@ -9,12 +9,12 @@ Node.js plugin to integrate with [Dependency-Track](https://dependencytrack.org/
 2. get a list of projects, their version, UUID and known vulnerabilities
 
 ## Requirements
-- Node.js 12.4 or newer
+- Node.js `12.4` or newer
 - [CycloneDX Node.js Module](https://www.npmjs.com/package/@cyclonedx/bom) to create the SBOM
 - [Dependency-Track](https://dependencytrack.org/) Server with version `^3.7.0`
 
 ## Install
-```
+```bash
 npm install -g @cyclonedx/bom @sephiroth-j/node-dependency-track-upload
 ```
 
@@ -51,6 +51,8 @@ Get a list of known projects and the numbers of their known vulnerabilities (_cr
 
 By default the output is an ASCII table. This can be disabled by giving the option `--no-table`.
 
+The output is sorted by project name in ascending order and by version in descending order (_[according to semver](https://semver.org/)_).
+
 **Output Examples**
 
 ```bash
@@ -59,12 +61,16 @@ $ dtrack-upload list-projects
 ┌───────────────────────┬────────────┬───────────────────────┬─────────────────┐
 │ Project Name          │ Version    │ UUID                  │ Vulnerabilities │
 ├───────────────────────┼────────────┼───────────────────────┼─────────────────┤
+│ @sephiroth-j/node-dep │ 0.1.1-beta │ 86d7c51c-fbe9-4a5e-98 │ 0/0/0/0/0       │
+│ endency-track-upload  │            │ 0a-e904135057a7       │                 │
+├───────────────────────┼────────────┼───────────────────────┼─────────────────┤
 │ @sephiroth-j/node-dep │ 0.1.0-beta │ 74fc22e1-b126-40a7-a0 │ 0/0/0/0/0       │
 │ endency-track-upload  │            │ bb-26ccfb2814bc       │                 │
 └───────────────────────┴────────────┴───────────────────────┴─────────────────┘
 
 # plain output
 $ dtrack-upload list-projects --no-table
+@sephiroth-j/node-dependency-track-upload, 0.1.1-beta, 86d7c51c-fbe9-4a5e-980a-e904135057a7, 0/0/0/0/0
 @sephiroth-j/node-dependency-track-upload, 0.1.0-beta, 74fc22e1-b126-40a7-a0bb-26ccfb2814bc, 0/0/0/0/0
 ```
 

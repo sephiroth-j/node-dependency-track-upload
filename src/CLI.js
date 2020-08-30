@@ -25,10 +25,10 @@ const {
 	getBorderCharacters,
 } = require('table');
 const {
-	map,
-	mergeMap,
-	startWith,
+	concatMap,
 	filter,
+	map,
+	startWith,
 } = require('rxjs/operators');
 
 const success = clc.green;
@@ -73,10 +73,10 @@ module.exports = class CLI {
 			}] : [];
 
 		api.check().pipe(
-			mergeMap(() => api.getProjectList(argv.activeOnly)),
+			concatMap(() => api.getProjectList(argv.activeOnly)),
 			// apply name filter if needed
 			filter(project => !argv.filter || project.name.indexOf(argv.filter) >= 0),
-			mergeMap(project => api.getVulnerabilities(project.uuid).pipe(
+			concatMap(project => api.getVulnerabilities(project.uuid).pipe(
 				map(vulns => {
 					const critical = vulns.filter(v => v.severity === 'CRITICAL').length;
 					const high = vulns.filter(v => v.severity === 'HIGH').length;
@@ -133,7 +133,7 @@ module.exports = class CLI {
 			const buf = fs.readFileSync(bom);
 			const api = this.#apiFactory(argv.url, argv.apiKey);
 			api.check().pipe(
-				mergeMap(() => api.uploadBom(buf, projectUuid, projectName, projectVersion))
+				concatMap(() => api.uploadBom(buf, projectUuid, projectName, projectVersion))
 			).subscribe(() => {
 				console.log(success('upload succeeded'));
 			}, () => {

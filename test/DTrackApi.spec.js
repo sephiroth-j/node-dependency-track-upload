@@ -105,20 +105,32 @@ describe('DTrackApi', function () {
 				done();
 			});
 		});
-		it('should unwrap and map response items', function (done) {
+		it('should sort, unwrap and map response items', function (done) {
 			const scope = nock(url).matchHeader('X-Api-Key', apiKey).get('/api/v1/project').query({excludeInactive: true}).reply(200, [
 				{
+					name: 'z-name2',
+					version: 'v2',
+					uuid: '2',
+					more: {}
+				},
+				{
 					name: 'name1',
-					version: 'v1',
+					version: '2.0.1-beta',
 					uuid: '1',
 					more: {}
 				},
 				{
-					name: 'name2',
-					version: 'v2',
-					uuid: '2',
+					name: 'name1',
+					version: '10.1.0',
+					uuid: '3',
 					more: {}
-				}
+				},
+				{
+					name: 'name1',
+					version: '2.1.1-beta',
+					uuid: '4',
+					more: {}
+				},
 			]);
 
 			let items = [];
@@ -133,11 +145,21 @@ describe('DTrackApi', function () {
 				expect(items).to.deep.equal([
 					{
 						name: 'name1',
-						version: 'v1',
+						version: '10.1.0',
+						uuid: '3'
+					},
+					{
+						name: 'name1',
+						version: '2.1.1-beta',
+						uuid: '4'
+					},
+					{
+						name: 'name1',
+						version: '2.0.1-beta',
 						uuid: '1'
 					},
 					{
-						name: 'name2',
+						name: 'z-name2',
 						version: 'v2',
 						uuid: '2'
 					}

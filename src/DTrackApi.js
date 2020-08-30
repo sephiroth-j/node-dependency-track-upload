@@ -15,9 +15,18 @@
  */
 
 'use strict';
-const { of } = require('rxjs');
 const satisfies = require('semver/functions/satisfies'); 
-const { map, pluck, filter, throwIfEmpty, mergeMap, tap } = require('rxjs/operators');
+const semverCompare = require('semver/functions/compare-build');
+const {
+	from,
+} = require('rxjs');
+const {
+	concatMap,
+	filter,
+	map,
+	pluck,
+	throwIfEmpty,
+} = require('rxjs/operators');
 const dataAttributeName = 'data';
 // semver of the supported Dependency-Track version(s)
 const supportedVersion = '^3.7.0';
@@ -83,13 +92,25 @@ module.exports = class DTrackApi {
 	 * @returns {Observable<{name:string, version:string, uuid:string}[]>}
 	 */
 	getProjectList(activeOnly) {
+		const nameCmp = new Intl.Collator().compare;
 		return this.#axios.get('/v1/project', {
 			params: {
 				excludeInactive: !!activeOnly
 			}
 		}).pipe(
 			pluck(dataAttributeName),
-			mergeMap(data => of(...data)),
+			// sort
+			map(data => data.sort((a, b) => {
+				// 1st level: by name asc
+				let result = nameCmp(a.name, b.name);
+				// 2nd level: by version desc
+				if (result === 0) {
+					result = semverCompare(b.version, a.version);
+				}
+				return result;
+			})),
+			// expand
+			concatMap(from),
 			map(project => Object.freeze({
 				name: project.name,
 				version: project.version,
