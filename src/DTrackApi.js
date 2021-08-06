@@ -29,7 +29,7 @@ const {
 } = require('rxjs/operators');
 const dataAttributeName = 'data';
 // semver of the supported Dependency-Track version(s)
-const supportedVersion = '^3.7.0';
+const supportedVersion = '^3.7.0 || ^ 4.0.0';
 
 function isValidUrl(url) {
 	try {

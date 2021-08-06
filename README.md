@@ -11,7 +11,7 @@ Node.js plugin to integrate with [Dependency-Track](https://dependencytrack.org/
 ## Requirements
 - Node.js `12.4` or newer
 - [CycloneDX Node.js Module](https://www.npmjs.com/package/@cyclonedx/bom) to create the SBOM
-- [Dependency-Track](https://dependencytrack.org/) Server with version `^3.7.0`
+- [Dependency-Track](https://dependencytrack.org/) Server with version `^3.7.0` or `^4.0.0`
 
 ## Install
 ```bash
@@ -24,8 +24,8 @@ npm install -g @cyclonedx/bom @sephiroth-j/node-dependency-track-upload
 Add the base URL to the Dependency-Track server and an API key to your npm config (`.npmrc`). This is the recommended way but both values can be provided as command line arguments as well (see below).
 
 ```bash
-npm config set @sephiroth-j/node-dependency-track-upload:url http://localhost:8080
-npm config set @sephiroth-j/node-dependency-track-upload:apiKey 1234-456879...
+npm config set @sephiroth-j/node-dependency-track-upload:url http://localhost:8081
+npm config set @sephiroth-j/node-dependency-track-upload:apiKey CO7aEO5FzHbRh8dyqBdrK9tWTClf8NYR
 ```
 
 ### Dependency-Track Permissions
